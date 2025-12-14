@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StuTube - Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* YOUTUBE-INSPIRED STYLES */
+        :root {
+            /* YouTube Color Palette (simplified) */
+            --yt-red: #ff0000;
+            --yt-dark-gray: #212121;
+            --yt-light-gray: #f9f9f9;
+            --yt-text-dark: #0f0f0f;
+            --yt-text-sub: #606060;
+            --yt-blue: #065fd4; /* Used for links/buttons, replacing original blue */
+        }
+        
+        /* BASE STYLES */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--yt-light-gray); 
+            color: var(--yt-text-dark);
+        }
+
+        /* HEADER (Top Bar) */
+        .header {
+            background-color: white; /* White background */
+            color: var(--yt-text-dark);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 500;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--yt-text-dark);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Red "Tube" or Icon indicator */
+        .logo::before {
+            content: "▶";
+            color: var(--yt-red);
+            font-size: 1.2em;
+            margin-right: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            display: flex;
+            border-radius: 40px; /* More rounded */
+            border: 1px solid #ccc;
+            overflow: hidden; 
+        }
+
+        .search-input {
+            padding: 10px 15px;
+            border: none;
+            width: 500px; /* Wider search bar */
+            font-size: 1em;
+            outline: none;
+            background-color: white;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #f8f8f8; /* Light gray button */
+            color: var(--yt-text-dark);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 400;
+            font-size: 1em;
+            border-left: 1px solid #ccc;
+        }
+        
+        .search-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Upload Button (Distinct) */
+        .upload-button {
+            padding: 8px 15px;
+            border: 1px solid var(--yt-blue);
+            background-color: white; 
+            color: var(--yt-blue);
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            font-weight: 500;
+            font-size: 0.95em;
+            border-radius: 2px; 
+            margin-left: 10px; 
+        }
+
+        .upload-button:hover {
+            background-color: var(--yt-blue);
+            color: white;
+        }
+
+        /* MAIN LAYOUT */
+        .container {
+            display: flex;
+            max-width: 1700px; /* Wider overall container */
+            margin: 0 auto;
+            padding: 0; /* Remove padding here */
+        }
+
+        /* SIDEBAR (Navigation) */
+        .sidebar {
+            width: 240px;
+            padding: 20px 0;
+            background-color: white;
+            box-shadow: 1px 0 2px rgba(0, 0, 0, 0.05); /* Subtle right shadow */
+            margin-right: 0;
+            height: calc(100vh - 54px); /* Full height minus header */
+            position: sticky; 
+            top: 54px; /* Align below sticky header */
+            overflow-y: auto;
+            border-radius: 0; /* Remove rounded corners */
+        }
+
+        .sidebar h3 {
+            color: var(--yt-text-sub);
+            text-transform: uppercase;
+            font-size: 0.9em;
+            padding: 10px 24px;
+            margin-top: 20px;
+            border-bottom: none;
+            font-weight: 500;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 0;
+        }
+
+        .sidebar li a {
+            display: flex;
+            align-items: center;
+            padding: 10px 24px;
+            text-decoration: none;
+            color: var(--yt-text-dark);
+            border-radius: 0;
+            transition: background-color 0.1s;
+            font-weight: 400;
+            font-size: 0.95em;
+        }
+        
+        /* Use Font-Awesome or simple icons in a real app, here we stick to text */
+        .sidebar li a::before {
+            content: ""; /* Remove old bullet/arrow */
+            margin-right: 0;
+            font-size: 1em;
+            color: inherit;
+        }
+
+        .sidebar li a:hover {
+            background-color: #f0f0f0; /* Slight hover gray */
+        }
+        
+        .sidebar li a.active {
+            background-color: #e5e5e5; /* Active/Selected gray */
+            font-weight: 500;
+        }
+
+        /* CONTENT AREA (Video Grid) */
+        .content-area {
+            flex-grow: 1;
+            padding: 20px 20px 20px 30px; /* Padding for the grid */
+        }
+
+        .content-area h2 {
+            color: var(--yt-text-dark);
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 1.5em; /* Slightly smaller for better flow */
+        }
+
+        .content-grid {
+            display: grid;
+            /* Adaptive grid like YouTube's homepage */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* VIDEO/CONTENT CARD */
+        .content-card {
+            background-color: white;
+            border-radius: 0; /* Square edges */
+            box-shadow: none; /* No shadow */
+            overflow: hidden;
+            transition: transform 0.2s;
+            border: none;
+            position: relative; 
+            cursor: pointer;
+        }
+        
+        .content-card:hover {
+            transform: none; /* No lift effect on hover */
+        }
+
+        .card-thumbnail {
+            width: 100%;
+            height: 160px; /* Aspect ratio */
+            background-color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            color: white;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .card-thumbnail::after {
+            content: attr(data-type); /* Display type badge */
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background-color: var(--yt-dark-gray);
+            color: white;
+            padding: 2px 4px;
+            font-size: 0.7em;
+            border-radius: 2px;
+            font-weight: 500;
+        }
+        
+        .card-info {
+            padding: 10px 0 15px 0; /* Minimal padding */
+            display: flex;
+        }
+        
+        /* Placeholder for channel icon (YouTube style) */
+        .channel-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #909090;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        
+        .text-info {
+            flex-grow: 1;
+        }
+
+        .card-info h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: var(--yt-text-dark);
+            font-weight: 500;
+            font-size: 1em;
+            line-height: 1.3;
+            max-height: 2.6em; /* Limit to 2 lines */
+            overflow: hidden;
+        }
+
+        .card-info .metadata-line {
+            font-size: 0.9em;
+            color: var(--yt-text-sub);
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
+        
+        .card-info .type {
+            display: none; /* Hide the extra type label */
+        }
+        
+        /* Delete Button Style */
+        .delete-button {
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.6); 
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            font-size: 1em;
+            z-index: 10;
+            opacity: 0; 
+            transition: opacity 0.2s;
+        }
+        
+        .content-card:hover .delete-button {
+            opacity: 1; 
+        }
+        
+        .delete-button:hover {
+            background-color: var(--yt-red);
+        }
+
+
+        /* UPLOAD & VIEWER MODAL BASE STYLES - kept similar */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 30px;
+            font-weight: normal;
+        }
+        
+        /* Viewer Modal Specific Styles */
+        #contentViewerModal .modal-content {
+            padding: 0;
+            max-width: 90%; 
+            height: 90%;
+        }
+        
+        #contentViewerModal .modal-header {
+            padding: 15px 20px;
+            background-color: var(--yt-red); /* Red header for media */
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        #contentViewerModal .close-viewer-button {
+            color: white; 
+            font-size: 30px;
+        }
+        
+        #viewer-container {
+            flex-grow: 1; 
+            overflow: hidden;
+            background-color: var(--yt-dark-gray); /* Dark background for media */
+        }
+        
+        /* Styles for the embedded content */
+        #viewer-container iframe, 
+        #viewer-container video {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        
+        /* Upload Form Styling */
+        .upload-form label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--yt-text-dark);
+        }
+        .upload-form input[type="text"],
+        .upload-form select,
+        .upload-form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .upload-form button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 25px;
+            background-color: var(--yt-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .upload-form button[type="submit"]:hover {
+            background-color: #cc0000;
+        }
+
+        /* Progress Bar (Kept functional/visible) */
+        #upload-progress-container {
+            margin-top: 20px;
+            border: 1px solid var(--yt-blue);
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f1f7fe;
+        }
+        
+        .progress-bar-inner {
+            background-color: var(--yt-red);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="#" class="logo">StuTube</a>
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search for concepts, lectures, papers..." class="search-input">
+                <button id="searchButton" class="search-button">Search</button>
+            </div>
+            <button id="openUploadModal" class="upload-button">Upload</button>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <aside class="sidebar">
+            <ul id="sidebar-nav">
+                <li><a href="#" class="nav-link active" data-filter="all">Home</a></li>
+                <li><a href="#" class="nav-link" data-filter="Video">Video Lectures</a></li>
+                <li><a href="#" class="nav-link" data-filter="PDF">Reading Material</a></li>
+                <li><a href="#" class="nav-link" data-filter="Test">Practice Tests</a></li>
+            </ul>
+            
+            <hr style="margin: 10px 0; border: none; border-top: 1px solid #eee;">
+            
+            <h3>Browse by Type</h3>
+            <ul id="sidebar-nav-more">
+                <li><a href="#" class="nav-link" data-filter="PPT">PPT Slides</a></li>
+                <li><a href="#" class="nav-link" data-filter="Paper">Question Papers</a></li>
+                <li><a href="#" class="nav-link" data-filter="Coding">Coding Tutorials</a></li>
+                <li><a href="#" class="nav-link" data-filter="Ethical Hacking">Ethical Hacking</a></li>
+            </ul>
+            <hr style="margin: 10px 0; border: none; border-top: 1px solid #eee;">
+            <h3>Your Feeds</h3>
+            <ul id="sidebar-feeds">
+                <li><a href="#" class="nav-link" data-filter="Simran ma'am">Simran ma'am's CS</a></li>
+                <li><a href="#" class="nav-link" data-filter="Recent">Watch Later</a></li>
+            </ul>
+        </aside>
+
+        <main class="content-area">
+            <h2>Recommended for You</h2>
+            
+            <section class="content-grid" id="contentGrid">
+                </section>
+        </main>
+    </div>
+
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button close-upload-button">&times;</span>
+            <h2>Upload New Content</h2>
+            
+            <form id="uploadForm" class="upload-form">
+                <label for="content-title">Title</label>
+                <input type="text" id="content-title" required placeholder="e.g., Buffer Overflow Whitepaper">
+
+                <label for="content-type">Content Type</label>
+                <select id="content-type" required>
+                    <option value="">-- Select Type --</option>
+                    <option value="Video">Video</option>
+                    <option value="PDF">PDF</option>
+                    <option value="PPT">PPT</option>
+                    <option value="Test">Test (Metadata only)</option>
+                    <option value="Paper">Question Paper</option>
+                </select>
+
+                <label for="upload-file">Select File</label>
+                <input type="file" id="upload-file" accept="video/*, .pdf, .ppt, .pptx, .doc, .docx" required>
+
+                <button type="submit">Start Upload</button>
+            </form>
+            
+            <div id="upload-progress-container">
+                <p>Uploading <span id="file-name-display">...</span></p>
+                <div class="progress-bar-outer">
+                    <div id="progressBar" class="progress-bar-inner">0%</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <div id="contentViewerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="viewerTitle">Content Viewer</h3>
+                <span class="close-viewer-button close-button">&times;</span>
+            </div>
+            <div id="viewer-container">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // NOTE: Change this URL if your server is running on a different address/port
+            const API_URL = 'http://127.0.0.1:5000'; 
+            
+            // DOM Elements for Interface
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+            // Get all nav links in both lists
+            const navLinks = document.querySelectorAll('#sidebar-nav .nav-link, #sidebar-nav-more .nav-link, #sidebar-feeds .nav-link');
+            const contentGrid = document.getElementById('contentGrid');
+
+            // DOM Elements for Upload Modal
+            const uploadModal = document.getElementById('uploadModal');
+            const openModalButton = document.getElementById('openUploadModal');
+            const closeUploadModalButton = document.querySelector('.close-upload-button');
+            const uploadForm = document.getElementById('uploadForm');
+            const uploadFile = document.getElementById('upload-file');
+            const progressBar = document.getElementById('progressBar');
+            const progressContainer = document.getElementById('upload-progress-container');
+            const fileNameDisplay = document.getElementById('file-name-display');
+            
+            // DOM Elements for Viewer Modal
+            const viewerModal = document.getElementById('contentViewerModal');
+            const closeViewerModalButton = document.querySelector('.close-viewer-button');
+            const viewerContainer = document.getElementById('viewer-container');
+            const viewerTitle = document.getElementById('viewerTitle');
+
+
+            let allContent = []; 
+
+            // --- A. INITIAL DATA LOAD FROM BACKEND ---
+
+            const fetchContent = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/api/content`);
+                    if (response.ok) {
+                         allContent = await response.json();
+                         renderContent(allContent);
+                    } else {
+                         throw new Error(`Server returned status: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.warn('Error fetching content, using empty grid:', error);
+                    // Renders empty grid if fetch fails
+                    renderContent(allContent); 
+                    contentGrid.insertAdjacentHTML('beforebegin', `
+                        <p style="color: var(--yt-red); font-weight: bold; padding: 10px; border: 1px solid #f8d7da; background-color: #fff0f0; border-radius: 5px; border-color: #e67e22;">
+                            Warning: Could not connect to the backend server at ${API_URL}.
+                        </p>
+                    `);
+                }
+            };
+            
+           // --- B. RENDERING AND INTERACTIVE FUNCTIONS ---
+
+            const createCardHTML = (item) => {
+                const date = item.date ? 
+                             new Date(item.date * 1000).toLocaleDateString() : 
+                             'N/A';
+                
+                const dataAttributes = item.url ? 
+                     `data-url="${item.url}" data-filename="${item.filename}"` : '';
+
+                return `
+                    <article class="content-card" data-type="${item.type}" data-title="${item.title}" ${dataAttributes}>
+                        <button class="delete-button" data-filename="${item.filename}" title="Delete Content">&times;</button>
+                        
+                        <div class="card-thumbnail" data-type="${item.type}">${item.type} Preview</div>
+                        
+                        <div class="card-info">
+                             <div class="channel-icon"></div>
+                             <div class="text-info">
+                                <h4>${item.title}</h4>
+                                <p class="metadata-line">${item.author || 'Unknown Author'}</p>
+                                <p class="metadata-line">Uploaded: ${date}</p>
+                             </div>
+                        </div>
+                    </article>
+                `;
+            }
+
+            const renderContent = (contentToRender) => {
+                contentGrid.innerHTML = ''; 
+                // Add a personalized message for content grid (optional)
+                 if (contentToRender.length === 0) {
+                     contentGrid.innerHTML = '<p style="text-align: center; color: var(--yt-text-sub); margin-top: 50px;">No content found matching the current filter/search.</p>';
+                 }
+                contentToRender.forEach(item => {
+                    contentGrid.innerHTML += createCardHTML(item);
+                });
+                bindCardClickHandlers();
+            };
+            
+            const bindCardClickHandlers = () => {
+                document.querySelectorAll('.content-card').forEach(card => {
+                    // Main card click to open viewer
+                    card.removeEventListener('click', handleCardClick);
+                    card.addEventListener('click', handleCardClick);
+                });
+                
+                // Bind Delete Button Handlers
+                document.querySelectorAll('.delete-button').forEach(button => {
+                    button.removeEventListener('click', handleDeleteContent);
+                    button.addEventListener('click', handleDeleteContent);
+                });
+            };
+
+            // Handle Card Click (Opens Viewer Modal - Logic from original file)
+            const handleCardClick = (e) => {
+                // Prevent card click if the delete button was the target
+                if (e.target.classList.contains('delete-button')) {
+                    e.stopPropagation(); 
+                    return;
+                }
+                
+                const card = e.currentTarget;
+                const title = card.getAttribute('data-title');
+                const type = card.getAttribute('data-type');
+                const url = card.getAttribute('data-url');
+                
+                viewerTitle.textContent = title;
+                viewerContainer.innerHTML = ''; 
+
+                if (!url) {
+                    viewerContainer.innerHTML = `<div class="unsupported-message">Cannot display this content type (${type}) in the viewer.</div>`;
+                } else if (type === 'Video') {
+                    viewerContainer.innerHTML = `<video controls autoplay src="${url}"></video>`;
+                } else if (type === 'PDF') {
+                    viewerContainer.innerHTML = `<iframe src="${url}"></iframe>`;
+                } else if (type === 'PPT' || type === 'Paper') {
+                    viewerContainer.innerHTML = `<iframe src="${url}"></iframe>`;
+                } else {
+                    viewerContainer.innerHTML = `<div class="unsupported-message">This content type (${type}) requires a dedicated viewer or must be downloaded. URL: ${url}</div>`;
+                }
+                
+                viewerModal.style.display = 'flex';
+            };
+
+          // Handle Deletion (Logic from original file)
+            const handleDeleteContent = async (e) => {
+                e.stopPropagation(); 
+                const filename = e.currentTarget.getAttribute('data-filename');
+                const cardTitle = e.currentTarget.closest('.content-card').getAttribute('data-title');
+                
+                if (!confirm(`Are you sure you want to delete the content: "${cardTitle}"?`)) {
+                    return;
+                }
+
+                try {
+                    // DELETE request to the server
+                    const response = await fetch(`${API_URL}/api/content/${filename}`, {
+                        method: 'DELETE',
+                    });
+
+                    if (response.status === 200 || response.status === 204) {
+                        alert(`Content "${cardTitle}" deleted successfully!`);
+                        
+                        // Remove the item from the local array
+                        allContent = allContent.filter(item => item.filename !== filename);
+                        
+                        // Re-render the grid
+                        applyFilters(document.querySelector('.nav-link.active').getAttribute('data-filter')); 
+
+                    } else {
+                        // Attempt to read error message from JSON response
+                        const error = await response.json().catch(() => ({ message: response.statusText || 'Unknown server error' }));
+                        alert(`Deletion failed: ${error.message}.`);
+                    }
+                } catch (error) {
+                    console.error('Network or server error during deletion:', error);
+                    alert(`A network error occurred. Is the server running at ${API_URL}?`);
+                }
+            };
+            
+            // --- C. SEARCH AND FILTER FUNCTIONS ---
+
+            const applyFilters = (activeFilterType) => {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                const filtered = allContent.filter(item => {
+                    const matchesSearch = item.title.toLowerCase().includes(searchTerm);
+                    
+                    // Allow search to match author/type/title
+                    const matchesAdvancedSearch = matchesSearch || 
+                                                  (item.author && item.author.toLowerCase().includes(searchTerm)) ||
+                                                  item.type.toLowerCase().includes(searchTerm);
+                                                  
+                    // Special filter for personalized categories
+                    let matchesCategory = false;
+                    if (activeFilterType === 'all') {
+                        matchesCategory = true;
+                    } else if (activeFilterType === 'Coding') {
+                         // Filter for Coding-related content
+                        matchesCategory = item.title.toLowerCase().includes('coding') || 
+                                          item.title.toLowerCase().includes('programming') ||
+                                          item.type === 'Video'; // Catch general videos too
+                    } else if (activeFilterType === 'Ethical Hacking') {
+                        matchesCategory = item.title.toLowerCase().includes('hacking') || 
+                                          item.title.toLowerCase().includes('security') ||
+                                          item.title.toLowerCase().includes('vulnerability');
+                    } else if (activeFilterType === 'Simran ma\'am') {
+                        // Filter for content by favorite teacher
+                        matchesCategory = item.author.toLowerCase().includes('simran');
+                    } else {
+                        // Standard type filter
+                        matchesCategory = item.type === activeFilterType;
+                    }
+                    
+                    return matchesAdvancedSearch && matchesCategory;
+                });
+                
+                renderContent(filtered);
+            };
+
+            searchButton.addEventListener('click', () => applyFilters(document.querySelector('.nav-link.active').getAttribute('data-filter')));
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                       applyFilters(document.querySelector('.nav-link.active').getAttribute('data-filter'));
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Remove active from ALL nav links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    e.target.classList.add('active');
+                    applyFilters(e.target.getAttribute('data-filter'));
+                });
+            });
+
+            // --- D. MODAL HANDLERS ---
+            // (Identical to original)
+            openModalButton.addEventListener('click', () => {
+                uploadModal.style.display = 'flex';
+                uploadForm.reset(); 
+                progressContainer.style.display = 'none';
+                progressBar.style.width = '0%';
+                progressBar.textContent = '0%';
+            });
+            closeUploadModalButton.addEventListener('click', () => { uploadModal.style.display = 'none'; });
+            
+            const closeViewerModal = () => {
+                viewerModal.style.display = 'none';
+                viewerContainer.innerHTML = '';
+            };
+            closeViewerModalButton.addEventListener('click', closeViewerModal);
+            
+             window.addEventListener('click', (e) => { 
+                if (e.target === uploadModal) {
+                    uploadModal.style.display = 'none';
+                }
+                if (e.target === viewerModal) {
+                    closeViewerModal();
+                }
+            });
+
+            // --- E. UPLOAD SUBMISSION ---
+            // (Identical to original)
+            uploadForm.addEventListener('submit', async (e) => {
+                 e.preventDefault(); 
+                
+                const file = uploadFile.files[0];
+                const title = document.getElementById('content-title').value;
+                const type = document.getElementById('content-type').value;
+
+                if (!file || !title || !type) {
+                    alert("Please fill out all fields and select a file.");
+                    return;
+                }
+                
+                progressContainer.style.display = 'block';
+                fileNameDisplay.textContent = file.name;
+
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('title', title);
+                formData.append('type', type);
+                
+                try {
+                     // NOTE: The server upload endpoint in the original was '/upload'
+                     const response = await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
+
+                    progressBar.style.width = '100%';
+                    progressBar.textContent = '100%';
+
+                    if (response.status === 201) {
+                        const newItem = await response.json();
+                        alert(`Upload Complete! "${newItem.title}" was successfully stored on the server.`);
+                        
+                        allContent.push(newItem);
+                        applyFilters(document.querySelector('.nav-link.active').getAttribute('data-filter'));
+                        uploadModal.style.display = 'none';
+                        uploadForm.reset();
+                    } else {
+                        const error = await response.json().catch(() => ({ message: response.statusText || 'Unknown server error' }));
+                        alert(`Upload failed: ${error.message}`);
+                        progressBar.style.width = '0%';
+                        progressBar.textContent = 'Failed';
+                    }
+                    
+                } catch (error) {
+                    console.error('Network or server error:', error);
+                    alert(`A network error occurred. Is the server running at ${API_URL}?`);
+                    progressBar.style.width = '0%';
+                    progressBar.textContent = 'Error';
+                }
+            });
+            
+            // Start the application
+            fetchContent();
+        });
+    </script>
+</body>
+</html>
